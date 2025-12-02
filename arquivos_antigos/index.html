@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise de Metas SMILE - Controle Completo</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+    <div class="notification" id="notification">✓ Dados salvos com sucesso!</div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>📊 Análise de Metas SMILE</h1>
+            <p id="headerSubtitle">Controle Completo de Performance</p>
+        </div>
+        
+        <div class="month-selector">
+            <label for="yearSelect">📅 Ano:</label>
+            <select id="yearSelect">
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+            </select>
+            
+            <label for="monthSelect">📅 Mês:</label>
+            <select id="monthSelect">
+                <option value="01">Janeiro</option>
+                <option value="02">Fevereiro</option>
+                <option value="03">Março</option>
+                <option value="04">Abril</option>
+                <option value="05">Maio</option>
+                <option value="06">Junho</option>
+                <option value="07">Julho</option>
+                <option value="08">Agosto</option>
+                <option value="09">Setembro</option>
+                <option value="10">Outubro</option>
+                <option value="11">Novembro</option>
+                <option value="12">Dezembro</option>
+            </select>
+        </div>
+        
+        <div class="controls">
+            <h2>🎯 Controles de Dados</h2>
+            <div class="button-group">
+                <button class="btn btn-primary" id="btnEditMetas">✏️ Editar Metas</button>
+                <button class="btn btn-success" id="btnAddDay">➕ Adicionar Dia</button>
+                <button class="btn btn-warning" id="btnEditDays">📝 Editar Dias</button>
+                <button class="btn btn-info" id="btnEditOthers">📊 Outros Dados</button>
+                <button class="btn btn-danger" id="btnClearMonth">🗑️ Limpar Mês</button>
+            </div>
+            
+            <!-- Seção de Edição de Metas -->
+            <div class="edit-section" id="editMetasSection">
+                <h3 style="color: #667eea; margin-bottom: 20px;">🎯 Definir Metas do Mês</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                    <div class="form-group">
+                        <label for="metaVendas">💰 Meta de Vendas Total (R$)</label>
+                        <input type="number" id="metaVendas" step="0.01" min="0" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label for="metaVista">💵 Meta Venda à Vista (R$)</label>
+                        <input type="number" id="metaVista" step="0.01" min="0" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label for="metaCrediario">💳 Meta Crediário (R$)</label>
+                        <input type="number" id="metaCrediario" step="0.01" min="0" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label for="metaOrto">🦷 Meta Orto (R$)</label>
+                        <input type="number" id="metaOrto" step="0.01" min="0" placeholder="0.00">
+                    </div>
+                </div>
+                <button class="btn btn-success" id="btnSaveMetas" style="margin-top: 20px;">💾 Salvar Metas</button>
+            </div>
+            
+            <!-- Seção de Adicionar Dia -->
+            <div class="edit-section" id="addDaySection">
+                <h3 style="color: #667eea; margin-bottom: 20px;">➕ Adicionar Novo Dia</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                    <div class="form-group">
+                        <label for="newDayDate">📅 Data</label>
+                        <input type="date" id="newDayDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newDayVendas">💰 Vendas (R$)</label>
+                        <input type="number" id="newDayVendas" step="0.01" min="0" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newDayVista">💵 Vista (R$)</label>
+                        <input type="number" id="newDayVista" step="0.01" min="0" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newDayCrediario">💳 Crediário (R$)</label>
+                        <input type="number" id="newDayCrediario" step="0.01" min="0" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newDayOrto">🦷 Orto (R$)</label>
+                        <input type="number" id="newDayOrto" step="0.01" min="0" placeholder="0.00" required>
+                    </div>
+                </div>
+                <button class="btn btn-success" id="btnSaveDay" style="margin-top: 20px;">💾 Adicionar Dia</button>
+            </div>
+            
+            <!-- Seção de Editar Dias -->
+            <div class="edit-section" id="editDaysSection">
+                <h3 style="color: #667eea; margin-bottom: 20px;">📝 Editar Dias Existentes</h3>
+                <div id="daysEditContainer" class="daily-edit-grid">
+                    <!-- Preenchido dinamicamente -->
+                </div>
+                <button class="btn btn-success" id="btnSaveDays" style="margin-top: 20px;">💾 Salvar Alterações</button>
+            </div>
+            
+            <!-- Seção de Outros Dados -->
+            <div class="edit-section" id="editOthersSection">
+                <h3 style="color: #667eea; margin-bottom: 20px;">📊 Outros Indicadores</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                    <div class="form-group">
+                        <label for="conversaoOrc">📈 Conversão Orçamento (%)</label>
+                        <input type="number" id="conversaoOrc" step="0.01" min="0" max="100" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label for="numOrcamentos">📋 Número de Orçamentos</label>
+                        <input type="number" id="numOrcamentos" step="1" min="0" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="ortosPgto">💰 Ortos em Pagamento</label>
+                        <input type="number" id="ortosPgto" step="1" min="0" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="instalacaoAparelho">🦷 Instalação de Aparelho</label>
+                        <input type="number" id="instalacaoAparelho" step="1" min="0" placeholder="0">
+                    </div>
+                </div>
+                <button class="btn btn-success" id="btnSaveOthers" style="margin-top: 20px;">💾 Salvar Dados</button>
+            </div>
+        </div>
+        
+        <div class="summary-cards" id="summaryCards">
+            <!-- Preenchido dinamicamente -->
+        </div>
+        
+        <div class="meta-info">
+            <h2>📈 Informações das Metas</h2>
+            <div class="meta-grid" id="metaInfo">
+                <!-- Preenchido dinamicamente -->
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <h2 style="color: #667eea; margin-bottom: 20px;">📋 Detalhamento Diário</h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Vendas</th>
+                        <th>Vista</th>
+                        <th>Crediário</th>
+                        <th>Orto</th>
+                        <th>Total Formas</th>
+                    </tr>
+                </thead>
+                <tbody id="dailyTable">
+                    <!-- Preenchido dinamicamente -->
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="charts-container">
+            <h2 style="color: #667eea; margin-bottom: 30px;">📊 Gráficos de Performance</h2>
+            
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3>Meta vs Realizado</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <h3>Evolução Diária de Vendas</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="dailySalesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3>Composição das Vendas</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="compositionChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <h3>Gap para Atingir Metas</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="gapChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentMonth = '';
+        let charts = {};
+        let allMonthsData = {};
+        
+        // Função para obter chave atual do mês
+        function getCurrentKey() {
+            const year = document.getElementById('yearSelect').value;
+            const month = document.getElementById('monthSelect').value;
+            return `${year}-${month}`;
+        }
+        
+        // Função para inicializar mês se não existir
+        function initMonthIfNeeded(key) {
+            if (!allMonthsData[key]) {
+                allMonthsData[key] = {
+                    metas: { vendas: 0, vista: 0, crediario: 0, orto: 0 },
+                    dias: [],
+                    outros: { conversao: 0, orcamentos: 0, ortosPgto: 0, instalacao: 0 }
+                };
+            }
+        }
+        
+        function saveToLocalStorage() {
+            try {
+                localStorage.setItem('smileData', JSON.stringify(allMonthsData));
+                return true;
+            } catch (e) {
+                console.error('Erro ao salvar:', e);
+                return false;
+            }
+        }
+        
+        function loadFromLocalStorage() {
+            try {
+                const saved = localStorage.getItem('smileData');
+                if (saved) {
+                    allMonthsData = JSON.parse(saved);
+                }
+            } catch (e) {
+                console.error('Erro ao carregar:', e);
+            }
+        }
+        
+        function calculateTotals() {
+            const data = allMonthsData[currentMonth];
+            let totals = { vendas: 0, vista: 0, crediario: 0, orto: 0 };
+            if (data && data.dias) {
+                data.dias.forEach(dia => {
+                    totals.vendas += dia.vendas;
+                    totals.vista += dia.vista;
+                    totals.crediario += dia.crediario;
+                    totals.orto += dia.orto;
+                });
+            }
+            return totals;
+        }
+        
+        function updateHeaderSubtitle() {
+            const year = document.getElementById('yearSelect').value;
+            const month = document.getElementById('monthSelect').value;
+            const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
+                          'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            document.getElementById('headerSubtitle').textContent = 
+                `Análise de ${months[parseInt(month) - 1]} de ${year}`;
+        }
+        
+        function loadMonthData() {
+            currentMonth = getCurrentKey();
+            initMonthIfNeeded(currentMonth);
+            const data = allMonthsData[currentMonth];
+            
+            
+            // Carregar metas
+            document.getElementById('metaVendas').value = data.metas.vendas || 0;
+            document.getElementById('metaVista').value = data.metas.vista || 0;
+            document.getElementById('metaCrediario').value = data.metas.crediario || 0;
+            document.getElementById('metaOrto').value = data.metas.orto || 0;
+            
+            // Carregar outros dados
+            document.getElementById('conversaoOrc').value = data.outros.conversao || 0;
+            document.getElementById('numOrcamentos').value = data.outros.orcamentos || 0;
+            document.getElementById('ortosPgto').value = data.outros.ortosPgto || 0;
+            document.getElementById('instalacaoAparelho').value = data.outros.instalacao || 0;
+            
+            // Atualizar todas as visualizações
+            updateAllViews();
+        }
+        
+        function updateAllViews() {
+            updateSummaryCards();
+            updateMetaInfo();
+            updateTable();
+            updateCharts();
+            loadDaysForEdit();
+        }
+        
+        function updateSummaryCards() {
+            const data = allMonthsData[currentMonth];
+            const totals = calculateTotals();
+            
+            const percVendas = data.metas.vendas > 0 ? (totals.vendas / data.metas.vendas * 100) : 0;
+            const percVista = data.metas.vista > 0 ? (totals.vista / data.metas.vista * 100) : 0;
+            const percCrediario = data.metas.crediario > 0 ? (totals.crediario / data.metas.crediario * 100) : 0;
+            const percOrto = data.metas.orto > 0 ? (totals.orto / data.metas.orto * 100) : 0;
+            
+            const getPercentageClass = (perc) => {
+                if (perc >= 80) return 'high';
+                if (perc >= 50) return 'medium';
+                return 'low';
+            };
+            
+            document.getElementById('summaryCards').innerHTML = `
+                <div class="summary-card vendas">
+                    <h3>💰 Vendas Totais</h3>
+                    <div class="value">R$ ${totals.vendas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                    <div class="meta">Meta: R$ ${data.metas.vendas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                    <div class="percentage ${getPercentageClass(percVendas)}">${percVendas.toFixed(1)}% da meta</div>
+                </div>
+                
+                <div class="summary-card vista">
+                    <h3>💵 Venda à Vista</h3>
+                    <div class="value">R$ ${totals.vista.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                    <div class="meta">Meta: R$ ${data.metas.vista.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                    <div class="percentage ${getPercentageClass(percVista)}">${percVista.toFixed(1)}% da meta</div>
+                </div>
+                
+                <div class="summary-card crediario">
+                    <h3>💳 Crediário</h3>
+                    <div class="value">R$ ${totals.crediario.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                    <div class="meta">Meta: R$ ${data.metas.crediario.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                    <div class="percentage ${getPercentageClass(percCrediario)}">${percCrediario.toFixed(1)}% da meta</div>
+                </div>
+                
+                <div class="summary-card orto">
+                    <h3>🦷 Orto</h3>
+                    <div class="value">R$ ${totals.orto.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                    <div class="meta">Meta: R$ ${data.metas.orto.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                    <div class="percentage ${getPercentageClass(percOrto)}">${percOrto.toFixed(1)}% da meta</div>
+                </div>
+            `;
+        }
+        
+        function updateMetaInfo() {
+            const data = allMonthsData[currentMonth];
+            document.getElementById('metaInfo').innerHTML = `
+                <div class="meta-item">
+                    <h4>📈 Conversão Orçamento</h4>
+                    <div class="value">${data.outros.conversao.toFixed(1)}%</div>
+                </div>
+                <div class="meta-item">
+                    <h4>📋 Orçamentos</h4>
+                    <div class="value">${data.outros.orcamentos}</div>
+                </div>
+                <div class="meta-item">
+                    <h4>💰 Ortos em Pagamento</h4>
+                    <div class="value">${data.outros.ortosPgto}</div>
+                </div>
+                <div class="meta-item">
+                    <h4>🦷 Instalação Aparelho</h4>
+                    <div class="value">${data.outros.instalacao}</div>
+                </div>
+            `;
+        }
+        
+        function updateTable() {
+            const tbody = document.getElementById('dailyTable');
+            tbody.innerHTML = '';
+            const data = allMonthsData[currentMonth];
+            
+            if (!data.dias || data.dias.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 30px; color: #999;">Nenhum dia cadastrado</td></tr>';
+                return;
+            }
+            
+            data.dias.forEach(dia => {
+                const total = dia.vista + dia.crediario + dia.orto;
+                const [y, m, d] = dia.data.split('-');
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${d}/${m}/${y}</strong></td>
+                        <td>R$ ${dia.vendas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                        <td>R$ ${dia.vista.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                        <td>R$ ${dia.crediario.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                        <td>R$ ${dia.orto.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                        <td><strong>R$ ${total.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></td>
+                    </tr>
+                `;
+            });
+        }
+        
+        function updateCharts() {
+            const data = allMonthsData[currentMonth];
+            const totals = calculateTotals();
+            
+            if (!data.dias || data.dias.length === 0) {
+                Object.values(charts).forEach(c => c && c.destroy());
+                charts = {};
+                return;
+            }
+            
+            // Gráfico 1: Meta vs Realizado
+            const ctx1 = document.getElementById('performanceChart').getContext('2d');
+            if (charts.performance) charts.performance.destroy();
+            charts.performance = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['Venda Total', 'Venda à Vista', 'Crediário', 'Orto'],
+                    datasets: [{
+                        label: 'Meta (R$)',
+                        data: [data.metas.vendas, data.metas.vista, data.metas.crediario, data.metas.orto],
+                        backgroundColor: 'rgba(102, 126, 234, 0.6)',
+                        borderColor: 'rgba(102, 126, 234, 1)',
+                        borderWidth: 2
+                    }, {
+                        label: 'Realizado (R$)',
+                        data: [totals.vendas, totals.vista, totals.crediario, totals.orto],
+                        backgroundColor: 'rgba(118, 75, 162, 0.6)',
+                        borderColor: 'rgba(118, 75, 162, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: true, position: 'top' } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { callback: v => 'R$ ' + v.toLocaleString('pt-BR') }
+                        }
+                    }
+                }
+            });
+            
+            // Gráfico 2: Evolução Diária
+            const labels = data.dias.map(d => {
+                const [y, m, day] = d.data.split('-');
+                return `${day}/${m}`;
+            });
+            
+            const ctx2 = document.getElementById('dailySalesChart').getContext('2d');
+            if (charts.daily) charts.daily.destroy();
+            charts.daily = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Vendas Diárias (R$)',
+                        data: data.dias.map(d => d.vendas),
+                        borderColor: 'rgba(102, 126, 234, 1)',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        borderWidth: 3,
+                        pointRadius: 5,
+                        pointBackgroundColor: 'rgba(102, 126, 234, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: true } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { callback: v => 'R$ ' + v.toLocaleString('pt-BR') }
+                        }
+                    }
+                }
+            });
+            
+            // Gráfico 3: Composição
+            const ctx3 = document.getElementById('compositionChart').getContext('2d');
+            if (charts.composition) charts.composition.destroy();
+            charts.composition = new Chart(ctx3, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Venda à Vista', 'Crediário', 'Orto'],
+                    datasets: [{
+                        data: [totals.vista, totals.crediario, totals.orto],
+                        backgroundColor: [
+                            'rgba(102, 126, 234, 0.8)',
+                            'rgba(118, 75, 162, 0.8)',
+                            'rgba(255, 99, 132, 0.8)'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                    const perc = total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : 0;
+                                    return ctx.label + ': R$ ' + ctx.parsed.toLocaleString('pt-BR') + ' (' + perc + '%)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Gráfico 4: Gap
+            const ctx4 = document.getElementById('gapChart').getContext('2d');
+            if (charts.gap) charts.gap.destroy();
+            charts.gap = new Chart(ctx4, {
+                type: 'bar',
+                data: {
+                    labels: ['Venda Total', 'Venda à Vista', 'Crediário', 'Orto'],
+                    datasets: [{
+                        label: 'Gap (R$)',
+                        data: [
+                            Math.max(0, data.metas.vendas - totals.vendas),
+                            Math.max(0, data.metas.vista - totals.vista),
+                            Math.max(0, data.metas.crediario - totals.crediario),
+                            Math.max(0, data.metas.orto - totals.orto)
+                        ],
+                        backgroundColor: 'rgba(244, 67, 54, 0.6)',
+                        borderColor: 'rgba(244, 67, 54, 1)',
+                        borderWidth: 2
+                    }, {
+                        label: 'Realizado (R$)',
+                        data: [totals.vendas, totals.vista, totals.crediario, totals.orto],
+                        backgroundColor: 'rgba(76, 175, 80, 0.6)',
+                        borderColor: 'rgba(76, 175, 80, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: true, position: 'top' } },
+                    scales: {
+                        x: { stacked: true },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            ticks: { callback: v => 'R$ ' + v.toLocaleString('pt-BR') }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function loadDaysForEdit() {
+            const container = document.getElementById('daysEditContainer');
+            const data = allMonthsData[currentMonth];
+            
+            if (!data.dias || data.dias.length === 0) {
+                container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #999;">Nenhum dia cadastrado para edição</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            data.dias.forEach((dia, index) => {
+                const [y, m, d] = dia.data.split('-');
+                container.innerHTML += `
+                    <div class="daily-input-group">
+                        <h4>📅 ${d}/${m}/${y}</h4>
+                        <label style="font-size: 0.8em; color: #666; margin-top: 5px; display: block;">Vendas (R$)</label>
+                        <input type="number" class="day-edit-vendas" data-index="${index}" value="${dia.vendas}" step="0.01" min="0">
+                        
+                        <label style="font-size: 0.8em; color: #666; margin-top: 5px; display: block;">Vista (R$)</label>
+                        <input type="number" class="day-edit-vista" data-index="${index}" value="${dia.vista}" step="0.01" min="0">
+                        
+                        <label style="font-size: 0.8em; color: #666; margin-top: 5px; display: block;">Crediário (R$)</label>
+                        <input type="number" class="day-edit-crediario" data-index="${index}" value="${dia.crediario}" step="0.01" min="0">
+                        
+                        <label style="font-size: 0.8em; color: #666; margin-top: 5px; display: block;">Orto (R$)</label>
+                        <input type="number" class="day-edit-orto" data-index="${index}" value="${dia.orto}" step="0.01" min="0">
+                        
+                        <button class="btn btn-danger" onclick="removeDay(${index})" style="margin-top: 10px; width: 100%; padding: 8px; font-size: 0.85em;">🗑️ Excluir</button>
+                    </div>
+                `;
+            });
+        }
+        
+        function removeDay(index) {
+            if (confirm('Deseja realmente excluir este dia?')) {
+                allMonthsData[currentMonth].dias.splice(index, 1);
+                saveToLocalStorage();
+                loadDaysForEdit();
+                updateAllViews();
+                showNotification('✓ Dia excluído com sucesso!');
+            }
+        }
+        
+        function showNotification(msg = '✓ Dados salvos com sucesso!') {
+            const notif = document.getElementById('notification');
+            notif.textContent = msg;
+            notif.classList.add('show');
+            setTimeout(() => {
+                notif.classList.remove('show');
+            }, 2000);
+        }
+        
+        function toggleSection(sectionId) {
+            document.querySelectorAll('.edit-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+        }
+        
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            loadFromLocalStorage();
+            
+            // Definir ano e mês atual
+            const now = new Date();
+            document.getElementById('yearSelect').value = now.getFullYear().toString();
+            document.getElementById('monthSelect').value = String(now.getMonth() + 1).padStart(2, '0');
+            
+            loadMonthData();
+            updateHeaderSubtitle();
+            
+            // Event listeners para seletores de ano e mês
+            document.getElementById('yearSelect').addEventListener('change', function() {
+                loadMonthData();
+                updateHeaderSubtitle();
+                document.querySelectorAll('.edit-section').forEach(s => s.classList.remove('active'));
+            });
+            
+            document.getElementById('monthSelect').addEventListener('change', function() {
+                loadMonthData();
+                updateHeaderSubtitle();
+                document.querySelectorAll('.edit-section').forEach(s => s.classList.remove('active'));
+            });
+            
+            // Botões principais
+            document.getElementById('btnEditMetas').addEventListener('click', function() {
+                toggleSection('editMetasSection');
+            });
+            
+            document.getElementById('btnAddDay').addEventListener('click', function() {
+                toggleSection('addDaySection');
+                document.getElementById('newDayDate').value = new Date().toISOString().split('T')[0];
+            });
+            
+            document.getElementById('btnEditDays').addEventListener('click', function() {
+                toggleSection('editDaysSection');
+            });
+            
+            document.getElementById('btnEditOthers').addEventListener('click', function() {
+                toggleSection('editOthersSection');
+            });
+            
+            document.getElementById('btnClearMonth').addEventListener('click', function() {
+                if (confirm('⚠️ Deseja realmente limpar TODOS os dados deste mês? Esta ação não pode ser desfeita!')) {
+                    allMonthsData[currentMonth] = {
+                        metas: { vendas: 0, vista: 0, crediario: 0, orto: 0 },
+                        dias: [],
+                        outros: { conversao: 0, orcamentos: 0, ortosPgto: 0, instalacao: 0 }
+                    };
+                    saveToLocalStorage();
+                    loadMonthData();
+                    showNotification('✓ Dados do mês limpos!');
+                }
+            });
+            
+            // Botão Salvar Metas
+            document.getElementById('btnSaveMetas').addEventListener('click', function() {
+                const data = allMonthsData[currentMonth];
+                data.metas.vendas = parseFloat(document.getElementById('metaVendas').value) || 0;
+                data.metas.vista = parseFloat(document.getElementById('metaVista').value) || 0;
+                data.metas.crediario = parseFloat(document.getElementById('metaCrediario').value) || 0;
+                data.metas.orto = parseFloat(document.getElementById('metaOrto').value) || 0;
+                
+                saveToLocalStorage();
+                updateAllViews();
+                showNotification('✓ Metas salvas com sucesso!');
+            });
+            
+            // Botão Adicionar Dia
+            document.getElementById('btnSaveDay').addEventListener('click', function() {
+                const data = allMonthsData[currentMonth];
+                const newDay = {
+                    data: document.getElementById('newDayDate').value,
+                    vendas: parseFloat(document.getElementById('newDayVendas').value) || 0,
+                    vista: parseFloat(document.getElementById('newDayVista').value) || 0,
+                    crediario: parseFloat(document.getElementById('newDayCrediario').value) || 0,
+                    orto: parseFloat(document.getElementById('newDayOrto').value) || 0
+                };
+                
+                if (!newDay.data) {
+                    alert('Por favor, selecione uma data!');
+                    return;
+                }
+                
+                const exists = data.dias.find(d => d.data === newDay.data);
+                if (exists) {
+                    alert('Já existe um registro para esta data! Use a opção "Editar Dias" para modificá-lo.');
+                    return;
+                }
+                
+                data.dias.push(newDay);
+                data.dias.sort((a, b) => new Date(a.data) - new Date(b.data));
+                
+                saveToLocalStorage();
+                updateAllViews();
+                
+                // Limpar formulário
+                document.getElementById('newDayDate').value = new Date().toISOString().split('T')[0];
+                document.getElementById('newDayVendas').value = '';
+                document.getElementById('newDayVista').value = '';
+                document.getElementById('newDayCrediario').value = '';
+                document.getElementById('newDayOrto').value = '';
+                
+                showNotification('✓ Dia adicionado com sucesso!');
+            });
+            
+            // Botão Salvar Dias Editados
+            document.getElementById('btnSaveDays').addEventListener('click', function() {
+                const data = allMonthsData[currentMonth];
+                
+                document.querySelectorAll('.day-edit-vendas').forEach(input => {
+                    const index = parseInt(input.dataset.index);
+                    data.dias[index].vendas = parseFloat(input.value) || 0;
+                });
+                
+                document.querySelectorAll('.day-edit-vista').forEach(input => {
+                    const index = parseInt(input.dataset.index);
+                    data.dias[index].vista = parseFloat(input.value) || 0;
+                });
+                
+                document.querySelectorAll('.day-edit-crediario').forEach(input => {
+                    const index = parseInt(input.dataset.index);
+                    data.dias[index].crediario = parseFloat(input.value) || 0;
+                });
+                
+                document.querySelectorAll('.day-edit-orto').forEach(input => {
+                    const index = parseInt(input.dataset.index);
+                    data.dias[index].orto = parseFloat(input.value) || 0;
+                });
+                
+                saveToLocalStorage();
+                updateAllViews();
+                showNotification('✓ Alterações salvas com sucesso!');
+            });
+            
+            // Botão Salvar Outros Dados
+            document.getElementById('btnSaveOthers').addEventListener('click', function() {
+                const data = allMonthsData[currentMonth];
+                data.outros.conversao = parseFloat(document.getElementById('conversaoOrc').value) || 0;
+                data.outros.orcamentos = parseInt(document.getElementById('numOrcamentos').value) || 0;
+                data.outros.ortosPgto = parseInt(document.getElementById('ortosPgto').value) || 0;
+                data.outros.instalacao = parseInt(document.getElementById('instalacaoAparelho').value) || 0;
+                
+                saveToLocalStorage();
+                updateAllViews();
+                showNotification('✓ Outros dados salvos com sucesso!');
+            });
+            
+            // Auto-salvar a cada 30 segundos
+            setInterval(() => {
+                saveToLocalStorage();
+            }, 30000);
+            
+        });
+    </script>
+</body>
+</html>
