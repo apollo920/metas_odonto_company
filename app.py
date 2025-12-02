@@ -296,7 +296,7 @@ with g1:
                   text_auto='.2s')  # Formato abreviado dos números
     
     fig1.update_traces(texttemplate='R$ %{y:,.0f}', textposition='outside')
-    fig1.update_layout(yaxis_title="Valor (R$)", height=400)
+    fig1.update_layout(yaxis_title="Valor (R$)", height=450)
     
     st.plotly_chart(fig1, use_container_width=True)
 
