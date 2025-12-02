@@ -40,7 +40,7 @@ STYLE = """
 """
 st.markdown(STYLE, unsafe_allow_html=True)
 
-st.markdown("<div class='big-title'>📊 Dashboard Smile Concept</div>", unsafe_allow_html=True)
+st.markdown("<div class='big-title'>📊 Dashboard Odonto Company</div>", unsafe_allow_html=True)
 
 
 # ------------------------------------------------------------
